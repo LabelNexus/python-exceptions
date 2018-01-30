@@ -7,6 +7,9 @@ class ApiException(Exception):
   def to_dict(self):
     return {"error": self.message}
 
+  def __str__(self):
+    return self.message
+
 class AuthorizationException(ApiException):
   def __init__(self, message, user=None):
     self.user_id = None if user is None else user.id
