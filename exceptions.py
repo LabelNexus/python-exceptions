@@ -35,3 +35,8 @@ class ValidationException(ApiException):
 class InvalidOperationException(ApiException):
   def __init__(self, message):
     ApiException.__init__(self, 403, message)
+
+class AsyncException(Exception):
+  def __init__(self, message, retry=True):
+    self.retry = retry
+    super().__init__(message)
