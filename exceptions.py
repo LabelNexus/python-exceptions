@@ -1,6 +1,11 @@
 """
 Common exception types
 """
+class LumavateException(Exception):
+  def __init__(self, message, **kwargs):
+    super(LumavateException, self).__init__(message)
+    self.kwargs = kwargs
+
 class ApiException(Exception):
   """Generic API exception class - both a code and a message can be specified"""
   def __init__(self, status_code, message):
