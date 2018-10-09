@@ -39,7 +39,10 @@ class ValidationException(ApiException):
     self.api_field = api_field
 
   def __str__(self):
-    return '{} ({})'.format(self.message, self.api_field)
+    if self.api_field is None:
+      return self.message
+    else:
+      return '{} ({})'.format(self.message, self.api_field)
 
   def to_dict(self):
     result = {"error": self.message}
