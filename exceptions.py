@@ -3,13 +3,15 @@ Common exception types
 """
 class LumavateException(Exception):
   def __init__(self, message, **kwargs):
-    super(LumavateException, self).__init__(message)
+    self.message = message
     self.kwargs = kwargs
+    super(LumavateException, self).__init__(message, kwargs)
 
 class ApiException(Exception):
   """Generic API exception class - both a code and a message can be specified"""
   def __init__(self, status_code, message):
-    Exception.__init__(self)
+    # In order for celery pickling to work, you have to pass all arguments to the super
+    super(ApiException, self).__init__(status_code, message)
     self.status_code = status_code
     self.message = message
 
@@ -56,8 +58,19 @@ class InvalidOperationException(ApiException):
   def __init__(self, message):
     ApiException.__init__(self, 403, message)
 
-class AsyncException(Exception):
+class AsyncException(LumavateException):
   """Exception that occures during an async operation"""
-  def __init__(self, message, retry=True):
+  def __init__(self, message, retry=True, **kwargs):
     self.retry = retry
-    super().__init__(message)
+    # Pass all properties as specific kwargs to base
+    # Passing retry as a kwarg to super so it'll be included when the exception is logged.
+    super(AsyncException, self).__init__(message, retry=retry, **kwargs)
+
+  def __setstate__(self, state):
+    self.kwargs = state
+
+  def __reduce__(self):
+    # Helper for celery pickling. The 3rd part of the tuple is state which we'll use to put into the self.kwargs property
+    # Since we pass "retry" as a kwarg to the super init, when unpickling we have to tell the pickler to pass message & retry as args
+    return (self.__class__, (self.message, self.retry), self.kwargs)
+
