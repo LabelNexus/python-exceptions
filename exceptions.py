@@ -74,3 +74,11 @@ class AsyncException(LumavateException):
     # Since we pass "retry" as a kwarg to the super init, when unpickling we have to tell the pickler to pass message & retry as args
     return (self.__class__, (self.message, self.retry), self.kwargs)
 
+class MaxAppException(ApiException):
+  """Exception for free user when they reach max app limit"""
+  def __init__(self):
+    ApiException.__init__(
+        self,
+        400,
+        "You've reached the limit of allowed apps for this account. "
+        "Please upgrade your subscription to add more apps to your account.")
