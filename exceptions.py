@@ -79,6 +79,6 @@ class MaxAppException(ApiException):
   def __init__(self):
     ApiException.__init__(
         self,
-        400,
+        402,
         "You've reached the limit of allowed apps for this account. "
         "Please upgrade your subscription to add more apps to your account.")
