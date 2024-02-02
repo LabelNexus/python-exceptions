@@ -1,3 +1,5 @@
+from flask import current_app
+
 """
 Common exception types
 """
@@ -82,3 +84,13 @@ class MaxAppException(ApiException):
         402,
         "You've reached the limit of allowed apps for this account. "
         "Please upgrade your subscription to add more apps to your account.")
+
+class PrefixedDomainException(ApiException):
+  def __init__(self, redirect_to_url, site_code=None):
+    if not redirect_to_url.startswith('http'):
+      redirect_to_url = f'{current_app.config["PROTO"]}{redirect_to_url}'
+
+    self.redirect_to_url = redirect_to_url
+    self.site_code = site_code
+    super(PrefixedDomainException, self).__init__(301, f'Redirecting to {self.redirect_to_url}')
+
