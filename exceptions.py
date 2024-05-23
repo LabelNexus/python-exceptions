@@ -94,3 +94,8 @@ class PrefixedDomainException(ApiException):
     self.site_code = site_code
     super(PrefixedDomainException, self).__init__(301, f'Redirecting to {self.redirect_to_url}')
 
+
+class UrlRedirectException(ApiException):
+  def __init__(self, url_redirect):
+    self.url_redirect = url_redirect
+    super(UrlRedirectException, self).__init__(self.url_redirect.redirect_code, f'Redirecting to {self.url_redirect.redirect_to}')
